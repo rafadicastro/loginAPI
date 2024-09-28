@@ -90,7 +90,54 @@ router.post('/signup', (req, res) => {
 });
 
 router.post('/signin', (req, res) => {
-    
+    let{ email, password} = req.body;
+    email = email.trim();
+    password = password.trim();
+
+    if(email == "" || password == ""){
+        res.json({
+            status: "FAILED",
+            message: "Insira as credenciais necessárias"
+        })
+    } else {
+        User.find({email})
+        .then(data => {
+            if(data.length){
+                const hashedPassword = data[0].password;
+                bcrypt.compare(password, hashedPassword).then(result => {
+                    if(result){
+                        res.json({
+                            status: "SUCCESS",
+                            message: "Signin successful",
+                            data: data
+                        })
+                    } else {
+                        res.json({
+                            status: "FAILED",
+                            message: "Senha incorreta"
+                        })
+                    }
+                })
+                .catch(err => {
+                    res.json({
+                        status: "FAILED",
+                        message: "Um erro ocorreu checando sua senha"
+                    })
+                })
+            } else {
+                res.json({
+                    status: "FAILED",
+                    message: "Dados incorretos"
+                })
+            }
+        })
+        .catch(err => {
+            res.json({
+                status: "FAILED",
+                message: "Um erro ocorreu checando o usuário"
+            })
+        })
+    }
 });
 
 module.exports = router;
