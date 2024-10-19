@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 1310;
 
-const userRouter = require('./api/User')
+const userRouter = require('./api/user')
 
 const bodyParser = require('express').json;
 app.use(bodyParser());
